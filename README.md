@@ -4,7 +4,7 @@ I built Gremlin Janitor because a Discord integration kept leaving behind a usel
 
 > Sent a message to guild chat but has not yet linked their Discord account.
 
-It was repetitive, annoying, and exactly the kind of thing that makes me ask, **“Why are we still doing this by hand?”**
+It was repetitive, annoying, and exactly the kind of thing that makes me ask, **“How can I eliminate this annoyance?”**
 
 Deleting the message was the easy part. The more interesting problem was figuring out how to delete the *right* message without creating a bot that could cheerfully eat something it shouldn't.
 
