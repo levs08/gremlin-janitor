@@ -14,7 +14,7 @@ Before letting a bot delete anything, I needed to know how Discord identified me
 
 Gremlin Janitor runs in two modes:
 
-- **Observe** — watches one configured channel and records message metadata.
+- **Observe** — watches the configured channel allowlist and records message metadata.
 - **Clean** — removes the placeholder when both the message and its source match the configured criteria.
 
 It requires an exact text match and, by default, a matching author, webhook, or application ID. There is a text-only option, but it has to be turned on explicitly.
@@ -41,13 +41,13 @@ It requires an exact text match and, by default, a matching author, webhook, or 
 
 ## Running it
 
-Copy `.env.example` to `.env` and add the bot token and target channel ID.
+Copy `.env.example` to `.env` and add the bot token and target channel ID(s).
 
 Start in observation mode:
 
 ```dotenv
 DISCORD_BOT_TOKEN=...
-TARGET_CHANNEL_ID=...
+TARGET_CHANNEL_IDS=123456789012345678,234567890123456789
 MODE=observe
 ```
 
@@ -70,4 +70,4 @@ Run the tests with:
 python -m pytest
 ```
 
-Bot tokens, runtime logs, and real Discord IDs are excluded from the repository.
+Bot tokens, runtime logs, and real Discord IDs are excluded from the repository. Existing deployments using the legacy `TARGET_CHANNEL_ID` variable remain supported; use `TARGET_CHANNEL_IDS` for one or more comma-separated channels going forward.
