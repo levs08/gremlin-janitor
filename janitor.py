@@ -52,14 +52,15 @@ class GremlinJanitor(discord.Client):
 
     async def on_ready(self) -> None:
         assert self.user is not None
-        channel = self.get_channel(self.settings.target_channel_id)
         logging.info("Logged in as %s (%s)", self.user, self.user.id)
         logging.info("Mode: %s", self.settings.mode.upper())
-        logging.info(
-            "Target channel: %s (%s)",
-            getattr(channel, "name", "not cached / unknown"),
-            self.settings.target_channel_id,
-        )
+        for channel_id in sorted(self.settings.target_channel_ids):
+            channel = self.get_channel(channel_id)
+            logging.info(
+                "Target channel: %s (%s)",
+                getattr(channel, "name", "not cached / unknown"),
+                channel_id,
+            )
         if self.settings.delete_enabled and not (
             self.settings.has_source_guard or self.settings.allow_text_only_delete
         ):
@@ -123,7 +124,7 @@ class GremlinJanitor(discord.Client):
     async def on_message(self, message: discord.Message) -> None:
         if self.user and message.author.id == self.user.id:
             return
-        if message.channel.id != self.settings.target_channel_id:
+        if message.channel.id not in self.settings.target_channel_ids:
             return
 
         snapshot = self.high_level_snapshot(message)
