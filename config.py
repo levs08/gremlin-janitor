@@ -29,7 +29,7 @@ def _ids(name: str) -> set[int]:
 @dataclass(frozen=True)
 class Settings:
     token: str
-    target_channel_id: int
+    target_channel_ids: set[int]
     mode: str
     placeholder_text: str
     allow_text_only_delete: bool
@@ -57,19 +57,27 @@ def load_settings() -> Settings:
     load_dotenv()
 
     token = os.getenv("DISCORD_BOT_TOKEN", "").strip()
-    channel = os.getenv("TARGET_CHANNEL_ID", "").strip()
+    channel_ids = _ids("TARGET_CHANNEL_IDS")
+
+    # Backward compatibility for existing deployments using one channel.
+    legacy_channel = os.getenv("TARGET_CHANNEL_ID", "").strip()
+    if legacy_channel:
+        channel_ids.add(int(legacy_channel))
+
     mode = os.getenv("MODE", "observe").strip().lower()
 
     if not token:
         raise SystemExit("DISCORD_BOT_TOKEN is missing from .env")
-    if not channel:
-        raise SystemExit("TARGET_CHANNEL_ID is missing from .env")
+    if not channel_ids:
+        raise SystemExit(
+            "TARGET_CHANNEL_IDS (or legacy TARGET_CHANNEL_ID) is missing from .env"
+        )
     if mode not in {"observe", "clean"}:
         raise SystemExit("MODE must be either 'observe' or 'clean'")
 
     return Settings(
         token=token,
-        target_channel_id=int(channel),
+        target_channel_ids=channel_ids,
         mode=mode,
         placeholder_text=os.getenv(
             "PLACEHOLDER_TEXT",
