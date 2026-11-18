@@ -55,8 +55,8 @@ def test_text_only_requires_explicit_opt_in():
 
 def test_application_id_guard_handles_multiple_guild_bridge_authors():
     """One integration app can post as many different WoW players."""
-    bridge_application_id = 1384671873593512078
-    for author_id in (1569045729631010908, 1568656462623019008):
+    bridge_application_id = 123456789012345678
+    for author_id in (101, 202):
         decision = decide(
             content=PLACEHOLDER,
             placeholder_text=PLACEHOLDER,
@@ -74,7 +74,7 @@ def test_application_id_guard_handles_multiple_guild_bridge_authors():
 
 
 def test_application_guard_rejects_other_apps_and_regular_members():
-    bridge_application_id = 1384671873593512078
+    bridge_application_id = 123456789012345678
     for actual_application_id in (None, 987654321012345678):
         decision = decide(
             content=PLACEHOLDER,
@@ -92,7 +92,7 @@ def test_application_guard_rejects_other_apps_and_regular_members():
 
 
 def test_application_guard_never_deletes_non_placeholder_text():
-    bridge_application_id = 1384671873593512078
+    bridge_application_id = 123456789012345678
     decision = decide(
         content="Hello from guild chat",
         placeholder_text=PLACEHOLDER,
