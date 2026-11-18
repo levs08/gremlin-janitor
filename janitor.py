@@ -181,7 +181,16 @@ class GremlinJanitor(discord.Client):
                 },
             )
 
-        if not self.settings.delete_enabled or not decision.should_delete:
+        if not self.settings.delete_enabled:
+            if decision.should_delete:
+                logging.info(
+                    "OBSERVE: would delete placeholder id=%s channel=%s "
+                    "application=%s (exact text + source confirmed)",
+                    message.id, message.channel.id, application_id,
+                )
+            return
+
+        if not decision.should_delete:
             return
 
         try:
