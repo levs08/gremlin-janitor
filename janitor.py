@@ -130,9 +130,11 @@ class GremlinJanitor(discord.Client):
         snapshot = self.high_level_snapshot(message)
         raw: dict[str, Any] | None = None
 
-        if self.settings.raw_rest_inspect:
+        # Only inspect messages matching the exact placeholder. This avoids
+        # unnecessary Discord REST calls and protects the free host's disk.
+        if self.settings.raw_rest_inspect and message.content == self.settings.placeholder_text:
             raw = await self.fetch_raw_message(message.channel.id, message.id)
-            if raw is not None:
+            if raw is not None and self.settings.log_all_target_messages:
                 append_jsonl(
                     self.settings.log_dir / "raw_messages.jsonl",
                     {"captured_at": utc_now(), "payload": raw},
