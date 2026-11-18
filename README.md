@@ -19,6 +19,27 @@ Gremlin Janitor runs in two modes:
 
 It requires an exact text match and, by default, a matching author, webhook, or application ID. There is a text-only option, but it has to be turned on explicitly.
 
+
+## Kerit Cloud / Pterodactyl deployment
+
+Use the public GitHub repository, branch `main`, `janitor.py` as the **App PY File**, and `requirements.txt` as the requirements file. Keep bot credentials in the server's private `.env` file, **never in GitHub**.
+
+On the Kerit **Files** page, create/edit `.env` using the variables in `.env.example`. Set `TARGET_CHANNEL_IDS` to the specific channels and start with `MODE=observe`. After watching a real placeholder appear, inspect the console's `application=<ID>` value and set:
+
+```dotenv
+SOURCE_APPLICATION_IDS=<verified integration application ID>
+ALLOW_TEXT_ONLY_DELETE=false
+MODE=observe
+```
+
+**Validate before deleting:** restart and generate another placeholder from an unlinked player. The console should report `OBSERVE: would delete placeholder`. Test a normal guild message to ensure it is not selected. Confirm the same application ID is used in both target channels.
+
+When the dry run is correct, stop the server, change only `MODE=clean` in `.env`, save it, and start the server. Deletion then requires both the *exact* placeholder sentence **and** a matching authorized source ID, in a configured target channel. Keep `ALLOW_TEXT_ONLY_DELETE=false`.
+
+The Pterodactyl Startup page's **Auto Update** toggle can pull changes from GitHub on restart. Enable it only if you want automatic code updates. A Git pull does **not** update your private `.env`. Do not use reinstall to deploy code changes after you've created `.env` unless you have backed it up, since reinstall can overwrite or remove local files.
+
+The bot needs Discord **Message Content Intent** plus View Channel, Read Message History, and Manage Messages permissions in the monitored channels. Be sure the Discord token is current and private; rotate it immediately if exposed. The bot observes only messages received while connected; it does not sweep historical messages.
+
 ## Tools I used
 
 - Python
